@@ -17,14 +17,14 @@ class AppState extends Cubit<int> {
 class App extends StatelessWidget {
   const App({super.key});
   @override
-  build(context) => MaterialApp(
+  build(_) => MaterialApp(
       title: appName,
       home: Scaffold(
           body: BlocProvider(
               create: (_) => AppState(0),
               child: BlocBuilder<AppState, int>(
                 builder: (ctx, _) =>
-                    pageContent(BlocProvider.of<AppState>(context)),
+                    pageContent(BlocProvider.of<AppState>(ctx)),
               ))));
 
   pageContent(AppState c) => Center(
