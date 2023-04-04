@@ -2,44 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 const appName = "Simplest Bloc app";
-void main() {
-  runApp(const App());
+
+class Counter {
+  final int value;
+  const Counter(this.value);
 }
 
-class AppState extends Cubit<int> {
-  AppState(super.initialState);
-
-  set state(val) {
-    emit(val);
-  }
+class State extends Cubit<Counter> {
+  State([super.initialState = const Counter(0)]);
+  setCounter(v) => emit(Counter(v));
+  addCounter(d) => emit(Counter(state.value + d as int));
+  count() => state.value;
 }
 
 class App extends StatelessWidget {
   const App({super.key});
   @override
   build(_) => MaterialApp(
-      title: appName,
       home: Scaffold(
           body: BlocProvider(
-              create: (_) => AppState(0),
-              child: BlocBuilder<AppState, int>(
-                builder: (ctx, _) =>
-                    pageContent(BlocProvider.of<AppState>(ctx)),
-              ))));
+              create: (_) => State(),
+              child:
+                  BlocBuilder<State, Counter>(builder: (c_, s_) => Page()))));
+}
 
-  pageContent(AppState c) => Center(
-        child: Column(
-          children: [
-            Text("The state is now: ${c.state}"),
-            button(Icons.add, () => c.state++),
-            button(Icons.clear, () => c.state = 0),
-            button(Icons.remove, () => c.state--),
-          ],
-        ),
-      );
+class Page extends StatelessWidget {
+  build(ctx) {
+    var c = ctx.read<State>();
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "${c.count()}",
+            textScaleFactor: 3.0,
+          ),
+          ButtonBar(alignment: MainAxisAlignment.center, children: [
+            button(Icons.add, () => c.addCounter(1)),
+            button(Icons.clear, () => c.setCounter(0)),
+            button(Icons.remove, () => c.addCounter(-1)),
+          ])
+        ],
+      ),
+    );
+  }
 
-  button(icon, func) => ElevatedButton(
+  static button(icon, func) => FloatingActionButton(
         onPressed: func,
         child: Icon(icon),
       );
+}
+
+void main() {
+  runApp(const App());
 }
