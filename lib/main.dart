@@ -20,6 +20,7 @@ class App extends StatelessWidget {
   build(_) => MaterialApp(
       title: appName,
       home: Scaffold(
+          appBar: AppBar(title: const Text(appName)),
           body: BlocProvider(
               create: (_) => AppState(0),
               child: BlocBuilder<AppState, int>(
@@ -29,6 +30,7 @@ class App extends StatelessWidget {
 
   pageContent(AppState c) => Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("The state is now: ${c.state}"),
             button(Icons.add, () => c.state++),
