@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,11 +10,11 @@ class Counter {
   const Counter(this.value);
 }
 
-class State extends Cubit<Counter> {
-  State([super.initialState = const Counter(0)]);
+class AppState extends Cubit<Counter> {
+  AppState([super.initialState = const Counter(0)]);
   setCounter(v) => emit(Counter(v));
-  addCounter(d) => emit(Counter(state.value + d as int));
-  count() => state.value;
+  modCounter(d) => emit(Counter(state.value + d as int));
+  get counterValue => state.value;
 }
 
 class App extends StatelessWidget {
@@ -22,34 +24,27 @@ class App extends StatelessWidget {
       home: Scaffold(
           appBar: AppBar(title: const Text(appName)),
           body: BlocProvider(
-              create: (_) => State(),
-              child: BlocBuilder<State, Counter>(
-                  builder: (c_, s_) => const Page()))));
-}
+              create: (_) => AppState(),
+              child: BlocBuilder<AppState, Counter>(builder: (ctx, _) {
+                return buildPage(ctx.read());
+              }))));
 
-class Page extends StatelessWidget {
-  const Page({super.key});
-
-  @override
-  build(context) {
-    var c = context.read<State>();
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "${c.count()}",
-            textScaleFactor: 3.0,
-          ),
-          ButtonBar(alignment: MainAxisAlignment.center, children: [
-            button(Icons.add, () => c.addCounter(1)),
-            button(Icons.clear, () => c.setCounter(0)),
-            button(Icons.remove, () => c.addCounter(-1)),
-          ])
-        ],
-      ),
-    );
-  }
+  buildPage(AppState c) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "${c.counterValue}",
+              textScaleFactor: 3.0,
+            ),
+            ButtonBar(alignment: MainAxisAlignment.center, children: [
+              button(Icons.add, () => c.modCounter(1)),
+              button(Icons.clear, () => c.setCounter(0)),
+              button(Icons.remove, () => c.modCounter(-1)),
+            ])
+          ],
+        ),
+      );
 
   static button(icon, func) => FloatingActionButton(
         onPressed: func,
