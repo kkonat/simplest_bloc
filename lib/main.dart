@@ -25,9 +25,8 @@ class App extends StatelessWidget {
           appBar: AppBar(title: const Text(appName)),
           body: BlocProvider(
               create: (_) => AppState(),
-              child: BlocBuilder<AppState, Counter>(builder: (ctx, _) {
-                return buildPage(ctx.read());
-              }))));
+              child: BlocBuilder<AppState, Counter>(
+                  builder: (ctx, _) => buildPage(ctx.read())))));
 
   buildPage(AppState c) => Center(
         child: Column(
